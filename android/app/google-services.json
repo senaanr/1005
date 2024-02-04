@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "318653219223",
+    "project_id": "tubitak1005-ec1b1",
+    "storage_bucket": "tubitak1005-ec1b1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:318653219223:android:8fbd9d02395a150d69c4d2",
+        "android_client_info": {
+          "package_name": "com.example.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "318653219223-jomhgtv7amqsvb0ti2k9pl1sa6qa6kcl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.app",
+            "certificate_hash": "f9516674e52e2f41a5e15318170b5d79984fbca9"
+          }
+        },
+        {
+          "client_id": "318653219223-h5hresn01vrmlv7o9rodo84u8ipbrdcv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCjlzFQ1GQWVIudXDqR86PDhPUYPIHwN-w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "318653219223-h5hresn01vrmlv7o9rodo84u8ipbrdcv.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "318653219223-4ch66t4krejcssdtvkte686pctr964dq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.app.RunnerTests"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

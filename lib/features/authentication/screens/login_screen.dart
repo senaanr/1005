@@ -1,9 +1,12 @@
-import 'package:app/constants/text_strings.dart';
 import 'package:app/features/authentication/helpers/auth_helper.dart';
+import 'package:app/features/authentication/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+
+import '../controllers/user_controller.dart';
 
 class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
@@ -28,22 +31,24 @@ class LoginScreen extends StatelessWidget {
   Future<String?> _signupUser(SignupData data) {
     return Future.delayed(loginTime).then((_) {
       return AuthenticationHelper().signUp(data).then((result) {
-        if (result != null) {
+        if (result == null) {
+          return null;
+        } else {
           return result.toString();
         }
-        return null;
       });
     });
   }
 
+
   Future<String?> _recoverPassword(String name) {
     return Future.delayed(loginTime).then((_) {
-      return AuthenticationHelper()
-          .recoverPassword(email: name).then((result) {
-        if(result!=null){
+      return AuthenticationHelper().recoverPassword(email: name).then((result) {
+        if (result == null) {
+          return null;
+        } else {
           return result.toString();
         }
-        return null;
       });
     });
   }
@@ -58,7 +63,7 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return FlutterLogin(
       onConfirmRecover: _signupConfirm,
-      onConfirmSignup: _signupConfirm,
+      //onConfirmSignup: _signupConfirm,
       loginAfterSignUp: false,
       theme: LoginTheme(
         pageColorLight: Colors.green,
@@ -81,7 +86,7 @@ class LoginScreen extends StatelessWidget {
           color: Colors.white,
         ),
       ),
-        additionalSignupFields: const [
+      additionalSignupFields: const [
         UserFormField(keyName: "userName", displayName: "Kullanıcı Adı"),
         UserFormField(keyName: "name", displayName: "İsim"),
       ],
@@ -89,14 +94,23 @@ class LoginScreen extends StatelessWidget {
       onSignup: _signupUser,
       loginProviders: [
         LoginProvider(
-          button: Buttons.anonymous,
+          //button: Buttons.anonymous,
           icon: Icons.person,
-          label: "Misafir Olarak Devam Et",
+          label: "Misafir",
           callback: () async {
-            debugPrint('Start google sign in');
-            await Future.delayed(loginTime);
-            debugPrint('Stop google sign in');
-            return null;
+            AuthenticationHelper().signInAnonymous().then((value) =>
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => HomeScreen(),)));
+          },
+        ),
+        LoginProvider(
+          icon: FontAwesomeIcons.google,
+          label: 'Google',
+          callback: () async {
+            AuthenticationHelper().signInWithGoogle().then((value) =>
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => HomeScreen(),
+                    settings: RouteSettings(arguments: value))));
           },
         ),
       ],
@@ -121,11 +135,12 @@ class LoginScreen extends StatelessWidget {
         recoverPasswordSuccess: 'Sıfırlama bağlantısı gönderildi.',
       ),
       onSubmitAnimationCompleted: () {
-        Get.offAllNamed("/HomePage");
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => HomeScreen(),));
       },
       userValidator: (value) {
-        if (!value!.contains('@') || !value.endsWith('.com')) {
-          return "Email '@' ve '.com' içermeli!";
+        if (!value!.contains('@') ) {
+          return "Email '@' içermeli!";
         }
         return null;
       },
@@ -141,7 +156,6 @@ class LoginScreen extends StatelessWidget {
         }
         return null;
       },
-
     );
   }
 }

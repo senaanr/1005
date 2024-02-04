@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_login/flutter_login.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import '../classes/user.dart';
 
@@ -9,6 +12,15 @@ import '../classes/user.dart';
 class AuthenticationHelper {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   get user => _auth.currentUser;
+  String? activeUserId;
+
+  MyUser? _createUser(User? kullanici) {
+    return kullanici == null ? null : MyUser.firebasedenuret(kullanici);
+  }
+
+  Stream<User> get authStateChanges  {
+    return _auth.authStateChanges().map(_createUser as User Function(User? event));
+  }
 
   String getUid() {
     return _auth.currentUser!.uid;
@@ -114,6 +126,26 @@ class AuthenticationHelper {
       return null;
     } on FirebaseAuthException catch (e) {
       return e.message;
+    }
+  }
+
+  Future<User?> signInWithGoogle() async{
+    final GoogleSignInAccount? gUser = await GoogleSignIn().signIn();
+    final GoogleSignInAuthentication? gAuth = await gUser!.authentication;
+    final credential = GoogleAuthProvider.credential(accessToken: gAuth?.accessToken,idToken: gAuth?.idToken);
+    final UserCredential userCredential = await _auth.signInWithCredential(credential);
+
+    return userCredential.user;
+  }
+
+  Future signInAnonymous() async {
+    try {
+      final result = await _auth.signInAnonymously();
+      print(result.user!.uid);
+      return result.user;
+    } catch (e) {
+      print("Anon error $e");
+      return null;
     }
   }
 }
