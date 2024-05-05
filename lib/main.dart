@@ -1,3 +1,7 @@
+import 'package:app/features/authentication/screens/ProfileScreen.dart';
+import 'package:app/features/authentication/screens/ProfileSettingsScreen.dart';
+import 'package:app/features/authentication/screens/home_screen.dart';
+import 'package:app/features/components/TabBar/tabBar.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -20,10 +24,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: LoginScreen.routeName,
-      routes: {
-        LoginScreen.routeName: (context) => LoginScreen(),
-      },
+      home: MyTabBar(),
     );
   }
 }

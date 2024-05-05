@@ -44,6 +44,10 @@ dependencies:
   provider: ^6.1.1
   google_sign_in: ^6.2.1
   font_awesome_flutter: ^10.7.0
+  image_picker: ^1.0.7
+  camera: ^0.10.5+9
+  carousel_slider: ^4.2.1
+  image_gallery_saver: ^2.0.3
 
 dev_dependencies:
   flutter_test:
@@ -68,8 +72,10 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
+  assets:
+    - lib/images/budama.jpg
+    - lib/images/sulama.jpg
+    - lib/images/gubreleme.jpg
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
