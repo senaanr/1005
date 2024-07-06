@@ -4,36 +4,22 @@ import 'package:carousel_slider/carousel_slider.dart';
 
 import '../../../utils/data.dart';
 
-class EducateScreen extends StatefulWidget {
-  const EducateScreen({Key? key}) : super(key: key);
+class WeedsScreen extends StatefulWidget {
+  const WeedsScreen({Key? key}) : super(key: key);
 
   @override
-  State<EducateScreen> createState() => _EducateScreenState();
+  State<WeedsScreen> createState() => _WeedsScreenState();
 }
 
-class _EducateScreenState extends State<EducateScreen> {
+class _WeedsScreenState extends State<WeedsScreen> {
   int _selectedIndex = 0;
-  List<Map<String, dynamic>> animalData = DataRepository.educateData;
+  List<Map<String, dynamic>> animalData = DataRepository.weedsData;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
-          // Background Image with Opacity
-          AnimatedSwitcher(
-            duration: const Duration(milliseconds: 500),
-            child: Image.asset(
-              animalData[_selectedIndex]['imagePath'],
-              key: ValueKey<String>(animalData[_selectedIndex]['imagePath']),
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
-              fit: BoxFit.cover,
-            ),
-          ),
-          Container(
-            color: Colors.black.withOpacity(0.4), // Adjust opacity as needed
-          ),
           Padding(
             padding: const EdgeInsets.all(20.0),
             child: Column(
@@ -43,7 +29,7 @@ class _EducateScreenState extends State<EducateScreen> {
                 Center(
                   child: Text(
                     animalData[_selectedIndex]['title'],
-                    style: const TextStyle(fontSize: 24, color: Colors.white),
+                    style: const TextStyle(fontSize: 24, color: Colors.black),
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -87,18 +73,6 @@ class _EducateScreenState extends State<EducateScreen> {
                                       ),
                                     ),
                                     margin: const EdgeInsets.only(bottom: 20.0),
-                                  ),
-                                  Container(
-                                    padding: const EdgeInsets.all(10),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(8.0),
-                                      color: Color(0xFF54402F),
-                                    ),
-                                    child: Text(
-                                      animalData[index]['description'],
-                                      textAlign: TextAlign.justify,
-                                      style: const TextStyle(fontSize: 14, color: Color(0xFFC7B6A7)),
-                                    ),
                                   ),
                                   const SizedBox(height: 20),
                                   ElevatedButton(

@@ -1,5 +1,5 @@
-import 'package:app/features/authentication/screens/ProfileScreen.dart';
-import 'package:app/features/authentication/screens/SettingsScreen.dart';
+import 'package:app/features/authentication/screens/contactScreen.dart';
+import 'package:app/features/authentication/screens/diseaseInfoScreen.dart';
 import 'package:app/features/authentication/screens/educational_screen.dart';
 import 'package:app/features/authentication/screens/home_screen.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +11,7 @@ class MyTabBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: DefaultTabController(
-        length: 4,
+        length: 5,
         child: Scaffold(
           backgroundColor: Colors.transparent,
           body: TabBarView(
@@ -19,7 +19,8 @@ class MyTabBar extends StatelessWidget {
               HomeScreen(),
               EducateScreen(),
               CameraScreen(),
-              SettingsScreen(),
+              ContactScreen(),
+              DiseaseInfoScreen(),
             ],
           ),
           bottomNavigationBar: ColoredBox(
@@ -29,7 +30,8 @@ class MyTabBar extends StatelessWidget {
                 Tab(icon: Icon(Icons.home),),
                 Tab(icon: Icon(Icons.video_collection)),
                 Tab(icon: Icon(Icons.add_box_outlined)),
-                Tab(icon: Icon(Icons.account_box)),
+                Tab(icon: Icon(Icons.contact_emergency)),
+                Tab(icon: Icon(Icons.info)),
               ],
             ),
           ),

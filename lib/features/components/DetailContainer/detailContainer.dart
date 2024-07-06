@@ -1,19 +1,58 @@
 import 'package:flutter/material.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import '../VideoPlayer/VideoPlayerWidget.dart';
+import '../YoutubePlayer/YoutubePlayerWidget.dart';
 
 class DetailContainer extends StatelessWidget {
-  final String imagePath;
+  final List<String> imagePaths;
+  final List<String> videoPaths;
+  final List<String> youtubeUrls;
   final String title;
   final String description;
 
-  const DetailContainer({
+  DetailContainer({
     Key? key,
-    required this.imagePath,
+    required this.imagePaths,
+    required this.videoPaths,
+    required this.youtubeUrls,
     required this.title,
     required this.description,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final List<Widget> carouselItems = [];
+
+    for (var imagePath in imagePaths) {
+      carouselItems.add(
+        Container(
+          width: MediaQuery.of(context).size.width,
+          child: Image.network(
+            imagePath,
+            fit: BoxFit.cover,
+          ),
+        ),
+      );
+    }
+
+    for (var videoPath in videoPaths) {
+      carouselItems.add(
+        Container(
+          width: MediaQuery.of(context).size.width,
+          child: VideoPlayerWidget(videoPath: videoPath),
+        ),
+      );
+    }
+
+    for (var youtubeUrl in youtubeUrls) {
+      carouselItems.add(
+        Container(
+          width: MediaQuery.of(context).size.width,
+          child: YouTubePlayerWidget(url: youtubeUrl),
+        ),
+      );
+    }
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -40,21 +79,19 @@ class DetailContainer extends StatelessWidget {
       ),
       body: Stack(
         children: [
-          // Arka plan resmi
           Container(
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: NetworkImage(imagePath),
+                image: NetworkImage(imagePaths[0]),
                 fit: BoxFit.cover,
               ),
             ),
           ),
           Container(
             decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.4), // Karartma rengi ve opaklığı burada ayarlanıyor
+              color: Colors.black.withOpacity(0.4),
             ),
           ),
-          // Resim ve bilgilerin olduğu container
           SingleChildScrollView(
             child: Container(
               padding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
@@ -64,18 +101,22 @@ class DetailContainer extends StatelessWidget {
                   end: Alignment.bottomCenter,
                   colors: [
                     Colors.transparent,
-                    Colors.black.withOpacity(0.9), // Buradaki sayıyı istediğiniz değere ayarlayabilirsiniz
+                    Colors.black.withOpacity(0.9),
                   ],
                 ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.start, // Resmi başlığın altına kaydırmak için mainAxisAlignment'i MainAxisAlignment.start olarak ayarlayın
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  SizedBox(height: 100), // Başlığın yüksekliği kadar bir boşluk ekleyin
-                  Image.network(
-                    imagePath,
-                    fit: BoxFit.contain,
+                  SizedBox(height: 100),
+                  CarouselSlider(
+                    options: CarouselOptions(
+                      height: MediaQuery.of(context).size.width,
+                      viewportFraction: 1.0,
+                      enlargeCenterPage: false,
+                    ),
+                    items: carouselItems,
                   ),
                   SizedBox(height: 5),
                   Text(

@@ -1,35 +1,50 @@
 import 'dart:math';
 
+import 'package:app/features/components/Drawer/MyDrawer.dart';
 import 'package:app/features/components/Weather/weatherWidget.dart';
 import 'package:flutter/material.dart';
+import 'package:app/features/authentication/services/NewsService.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   //static const String routeName = '/home';
 
   // ignore_for_file: sort_child_properties_last
 
   @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  Future<List<dynamic>>? _newsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _newsFuture = NewsService().fetchNews();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text("Ana Sayfa"),
-          centerTitle: true,
-          actions: [
-            IconButton(
-              icon: Icon(Icons.notifications),
-              onPressed: () {
-              },
-            ),
-          ],
-        ),
+      appBar: AppBar(
+        title: Text("Ana Sayfa"),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.notifications),
+            onPressed: () {},
+          ),
+        ],
+      ),
+      drawer: MyDrawer(),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
-            verticalDirection: VerticalDirection.down,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Container(
                 alignment: Alignment.topLeft,
-                margin: const EdgeInsets.only(left: 20),
+                margin: const EdgeInsets.only(left: 20, top: 20),
                 child: const Text(
                   "Hava Durumu",
                   style: TextStyle(
@@ -51,7 +66,20 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              destinations(),
+              FutureBuilder<List<dynamic>>(
+                future: _newsFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Haberler yüklenemedi: ${snapshot.error}'));
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return Center(child: Text('Haber bulunamadı'));
+                  } else {
+                    return destinations(snapshot.data!);
+                  }
+                },
+              ),
               SizedBox(height: 15,),
               Container(
                 alignment: Alignment.topLeft,
@@ -65,7 +93,7 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
               promo(),
-              const SizedBox(height: 20)
+              const SizedBox(height: 20),
             ],
           ),
         ),
@@ -77,7 +105,7 @@ class HomeScreen extends StatelessWidget {
     return Container(
       alignment: Alignment.bottomLeft,
       margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-      height: 75,
+      height: 100,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: 10,
@@ -91,16 +119,16 @@ class HomeScreen extends StatelessWidget {
                   leading: const CircleAvatar(
                     backgroundColor: Colors.green,
                     child: Icon(
-                      Icons.video_collection,
+                      Icons.price_check,
                     ),
                   ),
                   title: const Text(
-                    "Budama",
+                    "Fındık Fiyatı",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  subtitle: const Text("Budama nasıl yapılır?"),
+                  subtitle: const Text("Ordu'da fındık fiyatlarında yükseliş!"),
                 ),
               ),
             ),
@@ -110,15 +138,16 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Container destinations() {
+  Container destinations(List<dynamic> news) {
     return Container(
       alignment: Alignment.bottomLeft,
       margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
       height: 350,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        itemCount: 7,
+        itemCount: news.length,
         itemBuilder: (context, index) {
+          final article = news[index];
           return InkWell(
             onTap: () {},
             child: Container(
@@ -137,10 +166,10 @@ class HomeScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.end,
                         verticalDirection: VerticalDirection.down,
                         children: [
-                          const Padding(
+                          Padding(
                             padding: EdgeInsets.only(right: 90, bottom: 10),
                             child: Text(
-                              "Palomena Prasina",
+                              article['title'],
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
@@ -161,8 +190,8 @@ class HomeScreen extends StatelessWidget {
                                 ),
                                 Container(
                                   margin: const EdgeInsets.only(right: 100),
-                                  child: const Text(
-                                    "Dereli/Giresun",
+                                  child: Text(
+                                    article['source']['name'],
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 15,
@@ -175,11 +204,11 @@ class HomeScreen extends StatelessWidget {
                         ],
                       ),
                       position: DecorationPosition.background,
-                      decoration: const BoxDecoration(
+                      decoration: BoxDecoration(
                         color: Colors.transparent,
                         image: DecorationImage(
                           fit: BoxFit.cover,
-                          image: NetworkImage("https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcRE0MT7DZjztV7IM9peSHpEvyGQVXit-vORxhVMmeiZcrQHMcJa"),
+                          image: NetworkImage(article['urlToImage'] ?? 'https://via.placeholder.com/350x150'),
                         ),
                       ),
                     ),

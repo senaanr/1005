@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+import '../../authentication/classes/weather.dart';
+
 class WeatherWidget extends StatefulWidget {
   @override
   _WeatherWidgetState createState() => _WeatherWidgetState();
@@ -19,14 +21,14 @@ class _WeatherWidgetState extends State<WeatherWidget> {
   Future<Weather> fetchWeather() async {
     const apiKey = 'ee0716c88eb14be29f4182517240405';
     const city = 'Samsun';
+    const lang = 'tr';
 
     final response = await http.get(
-      Uri.parse(
-          'https://api.weatherapi.com/v1/current.json?key=$apiKey&q=$city'),
+      Uri.parse('https://api.weatherapi.com/v1/current.json?key=$apiKey&q=$city&lang=$lang'),
     );
 
     if (response.statusCode == 200) {
-      final Map<String, dynamic> data = json.decode(response.body);
+      final Map<String, dynamic> data = json.decode(utf8.decode(response.bodyBytes));
       return Weather.fromJson(data['current']);
     } else {
       throw Exception('Failed to load weather data');
@@ -52,7 +54,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
           late Widget weatherIcon;
 
           if (weather.condition.toLowerCase().contains('sunny')) {
-            weatherIcon =const Icon(Icons.wb_sunny);
+            weatherIcon = const Icon(Icons.wb_sunny);
           } else if (weather.condition.toLowerCase().contains('cloud')) {
             weatherIcon = const Icon(Icons.cloud);
           } else if (weather.condition.toLowerCase().contains('rain')) {
@@ -72,18 +74,19 @@ class _WeatherWidgetState extends State<WeatherWidget> {
             child: Row(
               children: [
                 weatherIcon,
-                const SizedBox(width: 50),
-                Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Sıcaklık: ${weather.temperatureC}°C',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      Text('Hava Durumu: ${weather.condition}'),
-                    ],
+                Expanded(
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Sıcaklık: ${weather.temperatureC}°C',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        Text('Hava Durumu: ${weather.condition}'),
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -92,22 +95,12 @@ class _WeatherWidgetState extends State<WeatherWidget> {
         } else if (snapshot.hasError) {
           return Text('${snapshot.error}');
         }
-        return CircularProgressIndicator();
+        return Center(
+          child: CircularProgressIndicator(),
+        );
       },
     );
   }
 }
 
-  class Weather {
-  final double temperatureC;
-  final String condition;
 
-  Weather({required this.temperatureC, required this.condition});
-
-  factory Weather.fromJson(Map<String, dynamic> json) {
-    return Weather(
-      temperatureC: json['temp_c'],
-      condition: json['condition']['text'],
-    );
-  }
-}
